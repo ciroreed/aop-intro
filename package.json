@@ -1,0 +1,26 @@
+{
+  "name": "aop-intro",
+  "version": "1.0.0",
+  "description": "asd",
+  "main": "index.js",
+  "scripts": {
+    "dist": "npm run build && npm run obf && npm run clear",
+    "build": "browserify ./index.js -o ./index.browserify.js",
+    "clear": "rm ./index.browserify.js",
+    "obf": "uglifyjs ./index.browserify.js --compress --mangle --keep-fnames --output ./index.min.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ciroreed/aop-intro.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ciroreed/aop-intro/issues"
+  },
+  "homepage": "https://github.com/ciroreed/aop-intro#readme",
+  "dependencies": {
+    "highlight.js": "^9.9.0",
+    "reveal": "0.0.4"
+  }
+}
