@@ -75,10 +75,11 @@ class Invoice {
                     <section>
                         <h3><b>AOP is not ...</b></h3>
                         <ul>
-                            <li>language dependent</li>
-                            <li>a technology</li>
-                            <li>a patern</li>
-                            <li>a solution for all problems, neither almost every problem</li>
+                            <li>not language dependent</li>
+                            <li>not a technology</li>
+                            <li>not a patern</li>
+                            <li>not very common in frontend environments.. why? :'(</li>
+                            <li>not a solution for all problems, neither almost every problem</li>
                         </ul>
                     </section>
                     <section>
@@ -86,8 +87,15 @@ class Invoice {
                         <ul>
                             <li>a technique</li>
                             <li>framework agnostic</li>
+                            <li>a toolkit against repetition</li>
+                            <li>hard to master</li>
                             <li>an extension for OOP</li>
                         </ul>
+                        <br/>
+                        <br/>
+                        <p>
+                            Some frontend frameworks use it.., but does not allow you to use as you see fit!
+                        </p>
                     </section>
                 </section>
                 <section>
@@ -195,11 +203,11 @@ class Invoice {
                         </p>
                         <br/>
                         <p>
-                            these are <b>corss-cutting concerns</b>
+                            These are <b>corss-cutting concerns</b>.
                         </p>
                         <br/>
                         <p>
-                            You're used to check if these bricks of infrastructure can be abstracted in order to be handled <b>in the same place</b>
+                            You're used to check if these bricks of infrastructure can be abstracted in order to be handled <b>in the same place</b>.
                         </p>
                     </section>
                 </section>
@@ -223,9 +231,7 @@ class Invoice {
     ...
 }
                         </code></pre>
-                        <p>
-                            You can plug them in many places in your codebase, if there are well defined you may also drop them in other projects...
-                        </p>
+
                     </section>
                     <section>
                         <img class="parrot" src="http://cultofthepartyparrot.com/parrots/parrotdad.gif"/>
@@ -279,8 +285,6 @@ dummyObject.doSomething = logBefore(dummyObject.doSomething);
                             Well, yeah... but my problems are quite harder than this piece of S***!
                         </p>
                     </section>
-                </section>
-                <section>
                     <section>
                         <img class="parrot" src="http://cultofthepartyparrot.com/parrots/slowparrot.gif"/>
                         <h4><b>Calm down..! </b></h4>
@@ -298,7 +302,7 @@ dummyObject.doSomething = logBefore(dummyObject.doSomething);
                     </section>
                     <section>
                         <p style="text-align: left">
-                            AOP is an extension of IoC paradigm, we need to understand briefly how it works.
+                            AOP is an extension of IoC technique, we need to understand briefly how it works.
                         </p>
                         <br/>
                         <p style="text-align: left">
@@ -306,24 +310,68 @@ dummyObject.doSomething = logBefore(dummyObject.doSomething);
                         </p>
                         <br/>
                         <p style="text-align: left">
-                            Any <u>infrastucture code</u> which is repeated through the project is a prime candidate for an <b>Aspect</b> in AOP.
+                            <i>CCC</i> are usually about Error detection and correction, Data validation, Persistence, Transaction processing, Security, Caching, Logging, Monitoring... and so on.. we may also want to deal with problems that only occur in the web, like <b>animations, dom updates</b>... and so on.
                         </p>
                         <br/>
                         <p style="text-align: left">
-                            <i>CCC</i> usually are about Synchronization, Real-time constraints, Error detection and correction, Product features, Memory management, Data validation, Persistence, Transaction processing, security, Caching, Logging, Monitoring... and so on..
+                            Any <u>infrastucture code</u> which is repeated through the project is a prime candidate for an <b>Aspect</b> in AOP.
                         </p>
                     </section>
                 </section>
+
                 <section>
-                    <h3><b>¿What is an Aspect?</b></h3>
-                    <ul>
-                        <li>An <b>Aspect</b> is a piece of code which encapsulates a <i>CCC</i>. It must be so well abstracted that we should able to use in more than one place, even other projects.</li>
-                        <li>An Aspect describe a pattern in our codebase, which can be assembled or stacked with other aspects or methods in Class declarations.</li>
-                        <li>An Aspect must access all the necessary objects, attributes or services to do the right suff at the right moment, then finish and delegate in the next piece of code.</li>
-                        <li>An Aspect should be responsible to perform <b>one</b> operation.</li>
-                    </ul>
+                    <section>
+                        <img class="parrot" src="http://cultofthepartyparrot.com/parrots/parrotmustache.gif"/>
+                        <h3><b>Technical definition</b></h3>
+                        <p>
+                            AOP is well described in many frameworks like Spring (Java), or PostSharp (.NET). There is a lot of documentation about. We're not used to discuss this here, just speak about the basics.
+                        </p>
+                        <ul>
+                            <li>Aspects</li>
+                            <li>Pointcuts</li>
+                            <li>Weaving</li>
+                        </ul>
+                        <p>
+                            We're skipping other concepts...
+                        </p>
+                    </section>
+                    <section>
+                        <h5><b>What is an Aspect?</b></h5>
+                        <ul>
+                            <li>An <b>Aspect</b> is a piece of code which encapsulates a <i>CCC</i>. It must be so well abstracted that we should able to use in more than one place, even other projects.</li>
+                            <li>An Aspect describe a pattern in our codebase, which can be assembled or stacked with other aspects or methods in Class declarations.</li>
+                            <li>An Aspect must access all the necessary objects, attributes or services to do the right suff at the right moment, then finish and delegate in the next piece of code.</li>
+                            <li>An Aspect should be responsible to perform <b>one</b> operation. Only!</li>
+                        </ul>
+                    </section>
+                    <section>
+                        <h5><b>What is an Pointcut?</b></h5>
+                        <ul>
+                            <li>A Pointcut is a point in the execution where an Aspect <i>(advice)</i> can be injected.</li>
+                            <li>A Pointcut is not an object or service, just a constant.</li>
+                            <li>For example, <b>before</b> the method execution, <b>after</b> the method execution, <b>arround</b> the method execution, <b>creating</b> a class instance, <b>on error</b> during method execution, <b>on destroy</b> instance...</li>
+                        </ul>
+                    </section>
+                    <section>
+                        <h5><b>What is Weaving?</b></h5>
+                        <ul>
+                            <li>Is the process of transforming a class injecting aspects.</li>
+                            <li>The resulting class still has reference to its upperclasses in hierarchy.</li>
+                        </ul>
+                    </section>
+                    <section>
+                        <img class="parrot" src="http://cultofthepartyparrot.com/parrots/parrotsleep.gif"/>
+                        <img class="parrot" src="http://cultofthepartyparrot.com/parrots/parrotsleep.gif"/>
+                        <img class="parrot" src="http://cultofthepartyparrot.com/parrots/boredparrot.gif"/>
+                        <img class="parrot" src="http://cultofthepartyparrot.com/parrots/parrotsleep.gif"/>
+                        <img class="parrot" src="http://cultofthepartyparrot.com/parrots/sadparrot.gif"/>
+                        <img class="parrot" src="http://cultofthepartyparrot.com/parrots/confusedparrot.gif"/>
+                        <img class="parrot" src="http://cultofthepartyparrot.com/parrots/parrotsleep.gif"/>
+                    </section>
                 </section>
                 <section>
+                    <img class="parrot" src="http://cultofthepartyparrot.com/parrots/fastparrot.gif"/>
+                    <h3>JS implementations of <b>AOP</b> and Examples!</h3>
 
                 </section>
             </div>
