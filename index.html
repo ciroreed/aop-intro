@@ -4,32 +4,237 @@
         <meta charset="utf-8">
         <title>AOP ··· intro</title>
 
-        <link rel="stylesheet" href="css/index.css">
-        <link rel="stylesheet" href="css/solarized.css">
-        <link rel="stylesheet" href="css/custom.css">
+        <link rel="stylesheet" href="style/index.css">
+        <link rel="stylesheet" href="style/theme/sky.css">
+        <link rel="stylesheet" href="style/custom.css">
 
-        <link rel="stylesheet" href="css/atom-one-light.css">
+        <link rel="stylesheet" href="style/atom-one-light.css">
     </head>
     <body>
         <div class="reveal">
             <div class="slides">
                 <section>
                     <img class="parrot" src="http://cultofthepartyparrot.com/parrots/boredparrot.gif"/>
-                    <h3>Aspect Oriented Programming in JS</h3>
+                    <h3><b>Aspect Oriented Programming in JS</b></h3>
                     <p>
                         by <a href="https://github.com/ciroreed/">@ciroreed</a> feat <a href="http://cultofthepartyparrot.com/">Party Parrot</a>
                     </p>
 
                 </section>
                 <section>
+                    <img class="parrot" src="http://cultofthepartyparrot.com/parrots/sadparrot.gif"/>
+                    <p>
+                        Raw Object oriented programming
+                    </p>
                     <pre><code class="hljs" contenteditable>
-                        var b = "hola";
-                        typeof b; // se evalua a "string"
-                        b = "1";
-                        typeof b; // se evalua a "string"
-                        b = 1;
-                        typeof b; // se evalua a "number"
+class Invoice {
+    ...
+    applyTaxes(priceProduct){
+        console.log(`'applyTaxes' - arguments: ${priceProduct}`)
+        result = priceProduct * selectedCountry.tax
+        console.log(`'applyTaxes' - return value: ${result}`)
+        return result
+    }
+    ...
+}
                     </code></pre>
+                </section>
+                <section>
+                    <img class="parrot" src="http://cultofthepartyparrot.com/parrots/dealwithitparrot.gif"/>
+                    <p>
+                        OOP <b>with</b> Aspect oriented programming
+                    </p>
+                    <pre><code class="hljs" contenteditable>
+class Invoice {
+    ...
+    @log
+    applyTaxes(priceProduct){
+        return priceProduct * selectedCountry.tax
+    }
+    ...
+}
+                    </code></pre>
+                </section>
+                <section phase-intro>
+                    <section>
+                        <h4>mm... Okay, Whut... </h4>
+                        <img class="parrot" src="http://cultofthepartyparrot.com/parrots/confusedparrot.gif"/>
+                        <p>
+                            ¿What is AOP?
+                        </p>
+                    </section>
+                    <section>
+                        <p>
+                            AOP is a paradigm which aims to <u>increase modularity</u> by allowing the separation of <b><i>cross-cutting concerns</i></b>
+                        </p>
+                        <br/>
+                        <p>
+                            AOP is about <u>abstraction</u> of your infrastructure code by <u>solving common problems with common solutions</u>
+                        </p>
+                    </section>
+                    <section>
+                        <h3><b>AOP is not ...</b></h3>
+                        <ul>
+                            <li>language dependent</li>
+                            <li>a technology</li>
+                            <li>a patern</li>
+                        </ul>
+                    </section>
+                    <section>
+                        <h3><b>AOP is ...</b></h3>
+                        <ul>
+                            <li>a technique</li>
+                            <li>framework agnostic</li>
+                            <li>an extension for OOP</li>
+                        </ul>
+                    </section>
+                </section>
+                <section>
+                    <section>
+                        <img class="parrot" src="http://cultofthepartyparrot.com/parrots/parrotsleep.gif"/>
+                        <p>
+                            let's jump into the code again!!
+                        </p>
+                    </section>
+                    <section>
+                        <p>
+                            We have a simple Invoice class with a method to handle customer's checkout..
+                        </p>
+                        <pre><code class="hljs" contenteditable>
+class Invoice {
+    ...
+    doCheckout(shippingDetails){
+        this.shippingDetails = shippingDetails
+    }
+    ...
+}
+                        </code></pre>
+                        <p>
+                            It looks nice! so simple!
+                        </p>
+                    </section>
+                    <section>
+                        <p>
+                            But now we're used to save customer's invoice using any ajax service...
+                        </p>
+                        <pre><code class="hljs" contenteditable>
+class Invoice {
+    ...
+    doCheckout(shippingDetails){
+        this.shippingDetails = shippingDetails
+        $OurAjaxService.post({ //if we're using IoC (Dependency Injection)
+            url: this.url,
+            data: this
+        }).then((response) => {
+            //...notify the user or something, trigger the state
+        })
+    }
+    ...
+}
+                        </code></pre>
+
+                    </section>
+                    <section>
+                        <p>
+                            And then, we need to validate customer's 'shippingDetails'
+                        </p>
+                        <pre><code class="hljs" contenteditable>
+class Invoice {
+    ...
+    doCheckout(shippingDetails){
+        if(this.validate(shippingDetails)){
+            this.shippingDetails = shippingDetails
+            $OurAjaxService.post({ //if we're using IoC (Dependency Injection)
+                url: this.url,
+                data: this
+            }).then((response) => {
+                //...notify the user or something, trigger the state
+            })
+        }
+    }
+    ...
+}
+                        </code></pre>
+
+                    </section>
+                    <section>
+                        <p>
+                            Let's say that our ajax service does not include JSON serialization
+                        </p>
+                        <pre><code class="hljs" contenteditable>
+class Invoice {
+    ...
+    doCheckout(shippingDetails){
+        if(this.validate(shippingDetails)){
+            this.shippingDetails = shippingDetails
+            var serializedInstance = JSON.stringify(this)
+            $OurAjaxService.post({ //if we're using IoC (Dependency Injection)
+                url: this.url,
+                data: serializedInstance
+            }).then((response) => {
+                //...notify the user or something, trigger the state
+            })
+        }
+    }
+    ...
+}
+                        </code></pre>
+
+                    </section>
+                    <section>
+                        <img class="parrot" src="http://cultofthepartyparrot.com/parrots/sadparrot.gif"/>
+                        <p>
+                            It's like our infrastucture code is hidding our business logic or <b>what this method is really trying to do</b>
+                        </p>
+                    </section>
+                    <section>
+                        <img class="parrot" src="http://cultofthepartyparrot.com/parrots/boredparrot.gif"/>
+                        <p>
+                            There are many infrastructure patterns that spread in many places in our project. Even in many of our projects...
+                        </p>
+                        <br/>
+                        <p>
+                            these are <b>corss-cutting concerns</b>
+                        </p>
+                        <br/>
+                        <p>
+                            You're used to check if these bricks of infrastructure can be abstracted in order to be handled <b>in the same place</b>
+                        </p>
+                    </section>
+                </section>
+                <section>
+                    <section>
+                        <p>
+                            So, don't repeat yourself
+                        </p>
+                        <img class="parrot" src="http://cultofthepartyparrot.com/parrots/parrot.gif"/>
+
+                        <pre><code class="hljs" contenteditable>
+class Invoice {
+    ...
+    @before('validate')
+    @after('serialize')
+    @after('POST: "url"')
+    @after('notify')
+    doCheckout(shippingDetails){
+        this.shippingDetails = shippingDetails
+    }
+    ...
+}
+                        </code></pre>
+                        <p>
+                            You can plug them in many places in your codebase, if there are well defined you may also drop them in other projects...
+                        </p>
+                    </section>
+                    <section>
+                        <img class="parrot" src="http://cultofthepartyparrot.com/parrots/parrotdad.gif"/>
+                        <p>
+                            <b>WTF! WHAT? HOW DO I DO THAT!?</b>
+                        </p>
+                    </section>
+                </section>
+                <section>
+                    <h3>Okay, let's jump into de JS time machine</h3>
                 </section>
             </div>
         </div>
