@@ -78,6 +78,7 @@ class Invoice {
                             <li>language dependent</li>
                             <li>a technology</li>
                             <li>a patern</li>
+                            <li>a solution for all problems, neither almost every problem</li>
                         </ul>
                     </section>
                     <section>
@@ -229,12 +230,101 @@ class Invoice {
                     <section>
                         <img class="parrot" src="http://cultofthepartyparrot.com/parrots/parrotdad.gif"/>
                         <p>
-                            <b>WTF! WHAT? HOW DO I DO THAT!?</b>
+                            <b>WTF! WHAT KIND OF SORCERY IS THIS?!1</b>
+                        </p>
+
+                        <p>
+                            <b>HOW DO I DO THAT!?</b>
+                        </p>
+
+                        <p>
+                            hurry up, explain this or GTFO!
                         </p>
                     </section>
                 </section>
                 <section>
-                    <h3>Okay, let's jump into de JS time machine</h3>
+                    <section>
+                        <h3><b>How we can implement this?</b></h3>
+
+                        <p>
+                            Step by step
+                        </p>
+                    </section>
+                    <section>
+                        <p>Early example of AOP in JS:</p>
+                        <pre><code class="hljs" contenteditable>
+function logBefore(fn){
+    return function(){
+        console.log("called " + fn.name + " with " + arguments);
+        return fn.apply(this, arguments);
+    }
+}
+
+var dummyObject = {
+    ...
+    doSomething: function (someArgument){
+        var somethign = someArgument + this.someAttribute;
+        ...
+
+        return something;
+    }
+};
+
+dummyObject.doSomething = logBefore(dummyObject.doSomething);
+                        </code></pre>
+                    </section>
+                    <section>
+                        <img class="parrot" src="http://cultofthepartyparrot.com/parrots/middleparrot.gif"/>
+                        <p>
+                            Well, yeah... but my problems are quite harder than this piece of S***!
+                        </p>
+                    </section>
+                </section>
+                <section>
+                    <section>
+                        <img class="parrot" src="http://cultofthepartyparrot.com/parrots/slowparrot.gif"/>
+                        <h4><b>Calm down..! </b></h4>
+                        <p>
+                            First of all we need to understand the purpose of that technique!
+                        </p>
+                        <br/>
+                        <p>
+                            Then you should change your way of thinking when coding. Instead of code <b>"what needs exactly to happen"</b> you should code your business and then <b>"apply that pattern"</b> before business logic, apply another after...
+                        </p>
+                        <br/>
+                        <p>
+                            <i>Or by describing what the program must accomplish in terms of the problem domain, rather than describe how to accomplish it (imperative).</i>
+                        </p>
+                    </section>
+                    <section>
+                        <p style="text-align: left">
+                            AOP is an extension of IoC paradigm, we need to understand briefly how it works.
+                        </p>
+                        <br/>
+                        <p style="text-align: left">
+                            In a nutshell, AOP allows cross-cutting concerns to be implemented outside of the code affected by those concerns. So we need to indentify that <i>CCC</i> first.
+                        </p>
+                        <br/>
+                        <p style="text-align: left">
+                            Any <u>infrastucture code</u> which is repeated through the project is a prime candidate for an <b>Aspect</b> in AOP.
+                        </p>
+                        <br/>
+                        <p style="text-align: left">
+                            <i>CCC</i> usually are about Synchronization, Real-time constraints, Error detection and correction, Product features, Memory management, Data validation, Persistence, Transaction processing, security, Caching, Logging, Monitoring... and so on..
+                        </p>
+                    </section>
+                </section>
+                <section>
+                    <h3><b>¿What is an Aspect?</b></h3>
+                    <ul>
+                        <li>An <b>Aspect</b> is a piece of code which encapsulates a <i>CCC</i>. It must be so well abstracted that we should able to use in more than one place, even other projects.</li>
+                        <li>An Aspect describe a pattern in our codebase, which can be assembled or stacked with other aspects or methods in Class declarations.</li>
+                        <li>An Aspect must access all the necessary objects, attributes or services to do the right suff at the right moment, then finish and delegate in the next piece of code.</li>
+                        <li>An Aspect should be responsible to perform <b>one</b> operation.</li>
+                    </ul>
+                </section>
+                <section>
+
                 </section>
             </div>
         </div>
