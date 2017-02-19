@@ -301,6 +301,32 @@ dummyObject.doSomething = logBefore(dummyObject.doSomething);
                         </p>
                     </section>
                     <section>
+                        <p>
+                            <a href="https://github.com/mgechev/injection-js">Like DI does</a>. For example..
+                        </p>
+                        <pre><code class="hljs" contenteditable>
+require('reflect-metadata');
+var di = require('injection-js');
+
+var Http = di.Class({
+  constructor: function () {}
+});
+
+var Service = di.Class({
+  constructor: [Http, function (http) {
+    this.http = http;
+  }]
+});
+
+var injector = di.ReflectiveInjector.resolveAndCreate([Http, Service]);
+
+console.log(injector.get(Service) instanceof Service);
+                        </code></pre>
+                        <p>
+                            In a nutshell DI says "give me that dependency, I don't care how".
+                        </p>
+                    </section>
+                    <section>
                         <p style="text-align: left">
                             AOP is an extension of IoC technique, we need to understand briefly how it works.
                         </p>
@@ -453,7 +479,7 @@ KInclude = Class.inherits(KBase, {
     }]
 });
                         </code></pre>
-                        &lt;k-include path="inc/partial.html" /&gt;
+                        &lt;k-include path="inc/partial.html" /&gt; (only works in Chrome)
 
                     </section>
                     <section>
