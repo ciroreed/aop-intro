@@ -207,7 +207,7 @@ class Invoice {
                         </p>
                         <br/>
                         <p>
-                            You're used to check if these bricks of infrastructure can be abstracted in order to be handled <b>in the same place</b>.
+                            So, checking if these bricks of infrastructure can be abstracted and then design a code to handle all <b>in the same place</b>, that is AOP.
                         </p>
                     </section>
                 </section>
@@ -328,7 +328,7 @@ dummyObject.doSomething = logBefore(dummyObject.doSomething);
                         </p>
                         <ul>
                             <li>Aspects</li>
-                            <li>Pointcuts</li>
+                            <li>Joinpoints</li>
                             <li>Weaving</li>
                         </ul>
                         <p>
@@ -345,10 +345,10 @@ dummyObject.doSomething = logBefore(dummyObject.doSomething);
                         </ul>
                     </section>
                     <section>
-                        <h5><b>What is an Pointcut?</b></h5>
+                        <h5><b>What is an Joinpoint?</b></h5>
                         <ul>
-                            <li>A Pointcut is a point in the execution where an Aspect <i>(advice)</i> can be injected.</li>
-                            <li>A Pointcut is not an object or service, just a constant.</li>
+                            <li>A Joinpoint is a point in the execution where an Aspect <i>(advice)</i> can be injected.</li>
+                            <li>A Joinpoint is not an object or service, just a constant.</li>
                             <li>For example, <b>before</b> the method execution, <b>after</b> the method execution, <b>arround</b> the method execution, <b>creating</b> a class instance, <b>on error</b> during method execution, <b>on destroy</b> instance...</li>
                         </ul>
                     </section>
@@ -446,9 +446,9 @@ KInclude = Class.inherits(KBase, {
     attachedCallback: ["override", function(parent) {
         parent();
         this.path = this.attr("path");
-        this.loadTemplate();
+        this.fetchTemplate();
     }],
-    loadTemplate: ["$GET: 'path', true", function(raw) {
+    fetchTemplate: ["$GET: 'path', true", function(raw) {
         this.append(raw);
     }]
 });
@@ -456,13 +456,140 @@ KInclude = Class.inherits(KBase, {
                         &lt;k-include path="inc/partial.html" /&gt;
 
                     </section>
+                    <section>
+                        <p>
+                            An RxJS example
+                        </p>
+                        <pre><code class="hljs" contenteditable>
+//Define a service to retrieve click events
+Aspects.locals.domObserver = rx.Observable.fromEvent(document, "click");
+
+Aspects.push(
+    //Like a joinPoint, this aspect will execute when a class is instanciated
+    Phase.INSTANCE,
+    function clickListener(handler) {
+        domObserver
+            .map(evt => evt.target)
+            //get only html elements where id is equals to the first param of the constructor
+            .filter(target => target.getAttribute("id") === meta.args[0])
+            //finally attach a callback which is the instance method
+            .subscribe(this[handler].bind(this));
+    }
+);
+                        </code></pre>
+                    </section>
+                    <section>
+                        <p>
+                            This aspect is executed when a class is instantiated
+                        </p>
+                        <pre><code class="hljs" contenteditable>
+var ViewTest = Class({
+    btnId: null,
+    constructor: ["clickListener: 'handleClick'", function(btnId){
+        this.btnId = btnId;
+    }],
+    handleClick: [function(evt) {
+        ...
+    }, "AsyncRequest", "AsyncRequest", ...]
+});
+
+new ViewTest('myBtn');
+                        </code></pre>
+                        <p>
+                            After  method execution we may attach many other aspects which are executed sequential and share whole metadata scope.
+                        </p>
+                    </section>
+                    <section>
+                        <p>
+                            Async aspect implementation with kaop, <a href="https://github.com/ciroreed/kir/blob/master/src/common/customAnnotations.js">here</a>
+                        </p>
+                        <pre><code class="hljs" contenteditable>
+Aspects.push(
+    Phase.EXECUTE,
+    function $GET(key, cached) {
+        var cbk = function(raw) {
+            meta.args.unshift(raw);
+            next();
+        };
+        if (cached) {
+            $AnyAjaxService.getCached(this[key], cbk);
+        } else {
+            $AnyAjaxService.get(this[key]).then(cbk);
+        }
+    }
+)
+                        </code></pre>
+                    </section>
                 </section>
                 <section>
-                    <img class="parrot" src="http://cultofthepartyparrot.com/parrots/fastparrot.gif"/>
-                    <h3>known AOP implementations in <b>TS/Babel</b> and Examples!</h3>
-                    <p>
-                        Are decorators an inflection point? <b>Definitely yes!</b>
-                    </p>
+                    <section>
+                        <img class="parrot" src="http://cultofthepartyparrot.com/parrots/fastparrot.gif"/>
+                        <h3>known AOP implementations in <b>TS/<s>Babel</s></b> and Examples!</h3>
+                        <p>
+                            Are ES7 Decorators an inflection point? <b>Definitely yes!</b>
+                        </p>
+                    </section>
+                    <section>
+                        <p>
+                            Raw AOP implementation using ES7 decorators proposal
+                        </p>
+                        <pre><code class="hljs" contenteditable>
+function logBefore(target, key, descriptor){
+    let originalMethod = descriptor.value
+    descriptor.value = function(...args){
+        console.log(`Log inside ${key} with params: ${args.join(", ")}`);
+        return originalMethod.apply(this, args)
+    }
+    return descriptor
+}
+
+class Dummy {
+    @logBefore
+    doSomething(){
+        ...
+    }
+}
+                        </code></pre>
+                    </section>
+                    <section>
+                        <h4><a href="https://github.com/mgechev/aspect.js">mgechev/aspect.js</a></h4>
+                        <p>
+                            An example Aspect definition by <b>mgechev</b>
+                        </p>
+                        <pre><code class="hljs" contenteditable>
+class LoggerAspect {
+  @beforeMethod({
+    classNamePattern: /^Article/,
+    methodNamePattern: /^(get|set)/
+  })
+  invokeBeforeMethod(meta: Metadata) {
+    // meta.woveMetadata == { bar: 42 }
+    console.log(`Inside of the logger. Called ${meta.className}.${meta.method.name} with args: ${meta.method.args.join(', ')}.`);
+  }
+}
+                        </code></pre>
+                    </section>
+                    <section>
+                        <p>
+                            @Wove merges the aspects with the class Definition
+                        </p>
+                        <pre><code class="hljs" contenteditable>
+@Wove({ bar: 42 })
+class ArticleCollection {
+  articles: Article[] = [];
+  getArticle(id: number) {
+    console.log(`Getting article with id: ${id}.`);
+    return this.articles.filter(a => {
+      return a.id === id;
+    }).pop();
+  }
+  setArticle(article: Article) {
+    console.log(`Setting article with id: ${article.id}.`);
+    this.articles.push(article);
+  }
+}
+                        </code></pre>
+                    </section>
                 </section>
             </div>
         </div>
