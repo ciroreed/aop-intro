@@ -370,8 +370,95 @@ dummyObject.doSomething = logBefore(dummyObject.doSomething);
                     </section>
                 </section>
                 <section>
-                    <img class="parrot" src="http://cultofthepartyparrot.com/parrots/fastparrot.gif"/>
-                    <h3>JS implementations of <b>AOP</b> and Examples!</h3>
+                    <section>
+                        <img class="parrot" src="http://cultofthepartyparrot.com/parrots/fastparrot.gif"/>
+                        <h3>known AOP implementations in <b>JS</b> and Examples!</h3>
+                    </section>
+                    <section>
+                        <h4><a href="https://github.com/cujojs/meld/blob/master/docs/api.md">cujojs/meld</a></h4>
+                        <pre><code class="hljs" contenteditable>
+var myObject = {
+    doSomething: function(a, b) {
+        return a + b;
+    }
+};
+
+// Call a function after myObject.doSomething returns
+var remover = meld.after(myObject, 'doSomething', function(result) {
+    console.log('myObject.doSomething returned: ' + result);
+});
+
+myObject.doSomething(1, 2); // Logs: "myObject.doSomething returned: 3"
+
+remover.remove();
+
+myObject.doSomething(1, 2); // Nothing logged
+                        </code></pre>
+                    </section>
+                    <section>
+                        <h4><a href="https://github.com/mgechev/angular-aop/tree/master/docs">mgechev/angular-aop</a></h4>
+                        <pre><code class="hljs" contenteditable>
+myModule.config(function ($provide, executeProvider) {
+  executeProvider.annotate($provide, {
+    ServiceToWove: [{
+      jointPoint: JOINT_POINT,
+      advice: ADVICE_NAME,
+      methodPattern: /Special/
+      argsPattern: [/arg1/, /arg2/]
+    }, {
+      jointPoint: JOINT_POINT
+      advice: ADVICE_NAME
+    }]
+  });
+});
+                        </code></pre>
+                    </section>
+                    <section>
+                        <h4><a href="https://github.com/ciroreed/kaop#method-decorators">ciroreed/kaop</a></h4>
+                        <pre><code class="hljs" contenteditable>
+Aspects.push(
+    Phase.EXECUTE,
+    function override() {
+        meta.args.unshift(meta.parentScope[meta.methodName].bind(this));
+    }
+);
+
+Programmer = Class.inherits(Person, {
+  //aspect 'override' inject the SuperClass.constructor as first parameter
+  constructor: ["override", function(parent, name, dborn, favouriteLanguage){
+    parent(name, dborn) //like super() does
+    this.favLang = favouriteLanguage
+  }],
+  run: ["override", function(parent){ //we simply override it to change its behavior
+    return parent() + " but... not as faster, coz im fat :/"
+  }]
+})
+                        </code></pre>
+                    </section>
+                    <section>
+                        <h4><b>Another example..</b></h4>
+                        <p>
+                            AOP is about remove infrastucture code from our business logic... right?, but our infrastructure code often is <b>asynchronous</b> :D
+                        </p>
+                        <pre><code class="hljs" contenteditable>
+//KBase is an abstract dom element following webcomponents guidelines
+module.exports = KInclude = Class.inherits(KBase, {
+    attachedCallback: ["override", function(parent) {
+        parent();
+        this.path = this.attr("path");
+        this.loadTemplate();
+    }],
+    loadTemplate: ["$GET: 'path', true", function(raw) {
+        this.append(raw);
+    }]
+});
+                        </code></pre>
+                        &lt;k-include path="inc/partial.html" /&gt;
+
+                    </section>
+                </section>
+                <section>
+                    <h3>known AOP implementations in <b>TS/Babel</b> and Examples!</h3>
 
                 </section>
             </div>

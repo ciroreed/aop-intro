@@ -4,6 +4,11 @@ img.parrot {
     box-shadow: none !important;
 }
 
+.reveal pre {
+    width: 100% !important;
+    font-size: 0.65em !important;
+}
+
 .reveal pre code {
     max-height: 600px !important;
 }
