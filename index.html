@@ -356,6 +356,7 @@ console.log(injector.get(Service) instanceof Service);
                             <li>Aspects</li>
                             <li>Joinpoints</li>
                             <li>Weaving</li>
+                            <li>Not the spring definition (we're missing advices, pointcuts... )</li>
                         </ul>
                         <p>
                             We're skipping other concepts...
@@ -484,49 +485,6 @@ KInclude = Class.inherits(KBase, {
                     </section>
                     <section>
                         <p>
-                            An RxJS example
-                        </p>
-                        <pre><code class="hljs" contenteditable>
-//Define a service to retrieve click events
-Aspects.locals.domObserver = rx.Observable.fromEvent(document, "click");
-
-Aspects.push(
-    //Like a joinPoint, this aspect will execute when a class is instanciated
-    Phase.INSTANCE,
-    function clickListener(handler) {
-        domObserver
-            .map(evt => evt.target)
-            //get only html elements where id is equals to the first param of the constructor
-            .filter(target => target.getAttribute("id") === meta.args[0])
-            //finally attach a callback which is the instance method
-            .subscribe(this[handler].bind(this));
-    }
-);
-                        </code></pre>
-                    </section>
-                    <section>
-                        <p>
-                            This aspect is executed when a class is instantiated
-                        </p>
-                        <pre><code class="hljs" contenteditable>
-var ViewTest = Class({
-    btnId: null,
-    constructor: ["clickListener: 'handleClick'", function(btnId){
-        this.btnId = btnId;
-    }],
-    handleClick: [function(evt) {
-        ...
-    }, "AsyncRequest", "AsyncRequest", ...]
-});
-
-new ViewTest('myBtn');
-                        </code></pre>
-                        <p>
-                            After  method execution we may attach many other aspects which are executed sequential and share whole metadata scope.
-                        </p>
-                    </section>
-                    <section>
-                        <p>
                             Async aspect implementation with kaop, <a href="https://github.com/ciroreed/kir/blob/master/src/common/customAnnotations.js">here</a>
                         </p>
                         <pre><code class="hljs" contenteditable>
@@ -544,6 +502,49 @@ Aspects.push(
         }
     }
 )
+                        </code></pre>
+                    </section>
+                    <section>
+                        <p>
+                            An RxJS example dealing with DOM
+                        </p>
+                        <pre><code class="hljs" contenteditable>
+var ViewTest = Class({
+    btnId: null,
+    constructor: ["clickListener: 'handleClick'", function(btnId){
+        this.btnId = btnId;
+    }],
+    handleClick: [function(evt) {
+        ...
+    }, "AsyncRequest", "AsyncRequest", ...]
+});
+
+new ViewTest('myBtn');
+                        </code></pre>
+                        <p>
+                            After method execution we may attach many other aspects which are executed sequential and share whole metadata scope.
+                        </p>
+                    </section>
+                    <section>
+                        <p>
+                            This aspect is executed when a class is instantiated
+                        </p>
+                        <pre><code class="hljs" contenteditable>
+//Define a service to retrieve click events
+Aspects.locals.domObserver = rx.Observable.fromEvent(document, "click");
+
+Aspects.push(
+    //Like a joinPoint, this aspect will execute when a class is instanciated
+    Phase.INSTANCE,
+    function clickListener(handler) {
+        domObserver
+            .map(evt => evt.target)
+            //get only html elements where id is equals to the first param of the constructor
+            .filter(target => target.getAttribute("id") === meta.args[0])
+            //finally attach a callback which is the instance method
+            .subscribe(this[handler].bind(this));
+    }
+);
                         </code></pre>
                     </section>
                 </section>
@@ -616,6 +617,190 @@ class ArticleCollection {
 }
                         </code></pre>
                     </section>
+                    <section>
+                        <p>
+                            An advice executed after async call (returning a promise)
+                        </p>
+                        <pre><code class="hljs" contenteditable>
+class LoggerAspect {
+  @afterMethod({
+    classNamePattern: /^Article/,
+    methodNamePattern: /^(get|set)/
+  })
+  invokeAfterMethod(meta: Metadata) {
+    meta.result.then(() => {
+        ...stuff
+    })
+  }
+}
+
+@Wove()
+class ArticleCollection {
+  articles: Article[] = [];
+  getArticle(id: number) {
+    return asyncOperation("foo")
+  }
+}
+
+                        </code></pre>
+                    </section>
+                    <section>
+                        <p>
+                            Async advices can handle the result. So if returning a promise, advices declared 'afterMethod' can handle it through meta: Metadata param. However advices <b>cannot start async operations by themselves</b>.
+                        </p>
+                        <p>
+                            No support yet for instance advices..
+                        </p>
+                        <img class="parrot" src="http://cultofthepartyparrot.com/parrots/sadparrot.gif"/>
+                    </section>
+                    <section>
+                            <h4><a href="https://github.com/ciroreed/kaop-ts">ciroreed/kaop-ts</a></h4>
+                            <p>
+                                Building a forum API
+                            </p>
+                            <pre><code class="hljs" contenteditable>
+@kaop.instance("Resource: 'uri'")
+class Controller {
+    uri: string
+    constructor(uri){
+        this.uri = uri
+    }
+    GET(res, req){
+        //database logic
+    }
+    /*
+    POST, PUT, DELETE
+    */
+}
+
+new Controller("/user")
+new Controller("/message")
+new Controller("/thread")
+new Controller("/topic")
+                            </code></pre>
+                    </section>
+                    <section>
+                        <p>
+                            This aspect/advice defines a resource behavior which simply executes when a new instance is created. Then the instance will listen all request with the given uri (instance property). The matching url is returned by the instance itself.
+                        </p>
+                        <pre><code class="hljs" contenteditable>
+
+Aspects.push(
+    function Resource(attributeUri){
+        SERVER.on("request", (req, res) => {
+            if(req.url === this[attributeUri]){
+                this[req.method].call(this, res, req)
+            }
+        })
+    }
+)
+                        </code></pre>
+                        <p>
+                            so.. a request to [GET] http://ourhost/user/?name=JimmyJazz will be matched by new Controller("/user") at the GET method.
+                        </p>
+                    </section>
+                    <section>
+                        <p>
+                            Now we're used to deal with persistence layer. We describe a behavior that should be executed before our method which is responsible to retrieve something from database ... then put that result as a parameter in our function...
+                        </p>
+                        <pre><code class="hljs" contenteditable>
+@kaop.instance("Resource: 'uri'")
+class Controller {
+    uri: string
+    constructor(uri){
+        this.uri = uri
+    }
+    @kaop.before("Query")
+    GET(res, req, queryResult){
+
+        res.json(queryResult)
+    }
+    /*
+    POST, PUT, DELETE
+    */
+}
+                        </code></pre>
+                    </section>
+                    <section>
+                        <p>
+                            We implement an aspect which is responsible for make queries against our database in one place. This aspect has access to all necesary data to perform the right query. Then it will place the result as the last parameter and delegate to the next method [or aspect]. **
+                        </p>
+                        <pre><code class="hljs" contenteditable>
+Aspects.push(
+    function Query(){
+        // this         instance            ...
+        // this.uri     instance property   all property or methods
+        // meta.key     method name         where this aspect is called from
+        // meta.scope   instance alias      ...
+        // meta.proto   instance prototype  ... not so useful
+        // meta.args    arguments           req info {query params...}
+        // meta.result  returned value      mostly 'after' stack
+
+        mysqlService.query(meta.key, meta.args[0].query).then((result) => {
+            meta.args.push(result)
+            next()
+        })
+    }
+)
+                        </code></pre>
+                    </section>
+                    <section>
+                        <p>
+                            Then of course we might as well place some validation/security before perform any dbb operation.. we have to drop this aspect before 'Query'
+                        </p>
+                        <pre><code class="hljs" contenteditable>
+Aspects.push(
+    function Auth(){
+        var req = meta.args[0], res = meta.args[1]
+        try {
+            if(!req.headers.token) throw new Error
+            //somehow perform a query which returns a user if token is valid
+            mysqlService.query("GET", { ... }).then((err, result) => {
+                if (result.length) {
+                    meta.session = result.pop() //asign to a variable which can be accessed
+                    next() //delegate into the next fn
+                } else { throw err || new Error }
+            })
+        } catch() {
+            res.end("You are not allowed to parrot!", 401)
+        }
+    }
+)
+                        </code></pre>
+                    </section>
+                    <section>
+                        <p>
+                            So pretty..
+                        </p>
+                        <pre><code class="hljs" contenteditable>
+@kaop.instance("Resource: 'uri'")
+class Controller {
+    uri: string
+    constructor(uri){
+        this.uri = uri
+    }
+
+    @kaop.before("Auth")
+    @kaop.before("Query")
+    GET(res, req, queryResult){
+
+        res.json(queryResult)
+    }
+    /*
+    POST, PUT, DELETE
+    */
+}
+                        </code></pre>
+                        <p>
+                            Maybe this example was not useful in terms of real problems, but self descriptive about its capabilities. The power is up to you!
+                        </p>
+                    </section>
+                </section>
+                <section>
+                    Testing
+                </section>
+                <section>
+                    Criticism
                 </section>
             </div>
         </div>
