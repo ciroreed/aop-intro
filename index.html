@@ -696,7 +696,7 @@ Aspects.push(
 )
                         </code></pre>
                         <p>
-                            so.. a request to [GET] http://ourhost/user/?name=JimmyJazz will be matched by new Controller("/user") at the GET method.
+                            so.. a request to [GET] <a href="#">http://ourhost/user/?name=JimmyJazz</a> will be matched by new Controller("/user") at the GET method.
                         </p>
                     </section>
                     <section>
@@ -736,7 +736,7 @@ Aspects.push(
         // meta.args    arguments           req info {query params...}
         // meta.result  returned value      mostly 'after' stack
 
-        mysqlService.query(meta.key, meta.args[0].query).then((result) => {
+        mysqlService.query(meta.key, { uri: this.uri, where: meta.args[0].query }).then((result) => {
             meta.args.push(result)
             next()
         })
@@ -792,15 +792,64 @@ class Controller {
 }
                         </code></pre>
                         <p>
-                            Maybe this example was not useful in terms of real problems, but self descriptive about its capabilities. The power is up to you!
+                            Maybe this example was not useful in terms of real problems, but self descriptive about its capabilities.
                         </p>
                     </section>
                 </section>
                 <section>
-                    Testing
+                    <section>
+                        <h4><b>Testing</b></h4>
+                        <p>
+                            You have to test functions. before testcases take care about 'meta' and 'next' and 'this' namespaces. <b>Its easy by creating a mock of those objects with the same names</b> before invoke the aspect.
+                        </p>
+                    </section>
+                    <section>
+                        <p>
+                            Simple test
+                        </p>
+                        <pre><code class="hljs" contenteditable>
+describe("testing Query aspect", () => {
+    it(...)
+    it(...)
+    it("It should retrieve JimmiJazz", (done) => {
+
+        //http://ourhost/user/?name=JimmyJazz
+
+        let meta = { //Mock the request as is
+            args: [{query: {name: 'JimmyJazz'}}],
+            key: "GET"
+        }
+
+        let next = done
+        let self = {uri: '/user'}
+
+        Query.call(self) //somehow invoke the aspect
+
+        meta.args.pop() //should be Jimmy
+    })
+})
+                        </code></pre>
+                    </section>
                 </section>
                 <section>
-                    Criticism
+                    <h4><b>Criticism</b></h4>
+                    <p>
+                        Some folks say that..
+                    </p>
+                    <ul>
+                        <li>Debugging</li>
+                        <li>Magic</li>
+                        <li>Performance</li>
+                        <li>Hard to master</li>
+                        <li>'duplication is better than bad abstraction' :\</li>
+                    </ul>
+                </section>
+                <section>
+                    <h3><b>Thanks so much · Muchas gracias</b></h3>
+                    <p>
+                        Happy codding!
+                    </p>
+                    <img class="parrot" src="http://cultofthepartyparrot.com/parrots/thumbsupparrot.gif"/>
                 </section>
             </div>
         </div>
