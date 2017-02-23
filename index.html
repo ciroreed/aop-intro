@@ -203,6 +203,24 @@ class Invoice {
                             Manage all <b>in the same place</b>, that is AOP.
                         </p>
                     </section>
+                    <section>
+                        <p>
+                            <b>Corss-cutting concerns</b> are often about:
+                        </p>
+                        <br/>
+                        <ul>
+                            <li>Validation</li>
+                            <li>Exception handling</li>
+                            <li>Caching</li>
+                            <li>Persistence</li>
+                            <li>Security</li>
+                            <li>Specific product features</li>
+                            <li>logging ..RLY!?</li>
+                            <li><b>DOM manipulation/events</b></li>
+                            <li><b>Animations</b></li>
+                            <li><b>Async code, AJAX, websockets and more..</b></li>
+                        </ul>
+                    </section>
                 </section>
                 <section>
                     <section>
@@ -611,8 +629,8 @@ new Controller("/topic")
                         <pre><code class="hljs" contenteditable>
 
 Aspects.push(
-    function Resource(attributeUri){ //mostly we can drop this from project to project
-        SERVER.on("request", (req, res) => {
+    function Resource(attributeUri){
+        NodejsHttpServer.on("request", (req, res) => {
             if(req.url === this[attributeUri]){
                 this[req.method].call(this, res, req)
             }
