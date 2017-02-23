@@ -106,6 +106,9 @@ class Invoice {
                         </p>
                     </section>
                     <section>
+                        <p>
+                            It looks nice! so simple!
+                        </p>
                         <pre><code class="hljs" contenteditable>
 class Invoice {
     ...
@@ -115,9 +118,6 @@ class Invoice {
     ...
 }
                         </code></pre>
-                        <p>
-                            It looks nice! so simple!
-                        </p>
                     </section>
                     <section>
                         <p>
@@ -250,7 +250,7 @@ class Invoice {
                         </p>
                     </section>
                     <section>
-                        <p>Early example of AOP in JS:</p>
+                        <p>Early example of AOP in vanilla JS:</p>
                         <pre><code class="hljs" contenteditable>
 function logBefore(fn){
     return function(){
@@ -322,15 +322,14 @@ console.log(injector.get(Service) instanceof Service);
                     <section>
                         <img class="parrot" src="http://cultofthepartyparrot.com/parrots/parrotmustache.gif"/>
                         <h3><b>Technical definition</b></h3>
-                        <p>
-                            AOP is well described in many frameworks like Spring (Java), or PostSharp (.NET). There is a lot of documentation about. We're not used to discuss this here, just speak about the basics.
-                        </p>
+                        <br>
                         <ul>
                             <li>Aspects</li>
                             <li>Joinpoints</li>
                         </ul>
-                        <p>
-                            We're skipping concepts...
+
+                        <p style="margin-top: 30px">
+                            We're skipping some technical concerns...
                         </p>
                     </section>
                     <section>
@@ -385,6 +384,8 @@ DemoApp.config(function ($provide, executeProvider) {
                     <section>
                         <h4><a href="https://github.com/ciroreed/kaop#method-decorators">ciroreed/kaop</a></h4>
                         <pre><code class="hljs" contenteditable>
+// MyClass.prototype.myMethod.apply(this, args);
+
 Aspects.push(
     Phase.EXECUTE,
     function override() {
@@ -392,14 +393,11 @@ Aspects.push(
     }
 );
 
-Programmer = Class.inherits(Person, {
+FrontProgrammer = Class.inherits(Programmer, {
   //aspect 'override' inject the SuperClass.constructor as first parameter
-  constructor: ["override", function(parent, name, dborn, favouriteLanguage){
+  constructor: ["override", function(parent, name, dborn){
     parent(name, dborn) //like super() does
-    this.favLang = favouriteLanguage
-  }],
-  run: ["override", function(parent){ //we simply override it to change its behavior
-    return parent() + " but... not as faster, coz im fat :/"
+    this.favLang = "Javascript";
   }]
 })
                         </code></pre>
@@ -600,14 +598,10 @@ class Controller {
     GET(res, req){
         //database logic
     }
-    /*
-    POST, PUT, DELETE
-    */
+    /* POST, PUT, DELETE */
 }
 
-class UserController extends Controller {}
-
-new UserController("/user")
+new Controller("/user")
 new Controller("/message")
 new Controller("/thread")
 new Controller("/topic")
@@ -617,7 +611,7 @@ new Controller("/topic")
                         <pre><code class="hljs" contenteditable>
 
 Aspects.push(
-    function Resource(attributeUri){
+    function Resource(attributeUri){ //mostly we can drop this from project to project
         SERVER.on("request", (req, res) => {
             if(req.url === this[attributeUri]){
                 this[req.method].call(this, res, req)
@@ -627,7 +621,7 @@ Aspects.push(
 )
                         </code></pre>
                         <p>
-                            so.. a request to [GET] <a href="#">http://ourhost/user/?name=JimmyJazz</a> ..
+                            so.. a request to [GET] <a href="#">~/user/?name=JimmyJazz</a> ..
                         </p>
                     </section>
                     <section>
@@ -643,9 +637,7 @@ class Controller {
 
         res.json(queryResult)
     }
-    /*
-    POST, PUT, DELETE
-    */
+    /* POST, PUT, DELETE */
 }
                         </code></pre>
                     </section>
@@ -708,9 +700,7 @@ class Controller {
 
         res.json(queryResult)
     }
-    /*
-    POST, PUT, DELETE
-    */
+    /* POST, PUT, DELETE */
 }
                         </code></pre>
                         <p>
@@ -733,9 +723,7 @@ class Controller {
 describe("testing Query aspect", () => {
     it(...)
     it(...)
-    it("It should retrieve JimmiJazz", (done) => {
-
-        //http://ourhost/user/?name=JimmyJazz
+    it("It should retrieve JimmiJazz from /user/?name=JimmyJazz", (done) => {
 
         let meta = { //Mock the request as is
             args: [{query: {name: 'JimmyJazz'}}],
