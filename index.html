@@ -29,9 +29,9 @@
                     <pre><code class="hljs" contenteditable>
 class Invoice {
     ...
-    applyTaxes(priceProduct){
-        console.log(`'applyTaxes' - arguments: ${priceProduct}`)
-        result = priceProduct * selectedCountry.tax
+    applyTaxes(productPrice){
+        console.log(`'applyTaxes' - arguments: ${productPrice}`)
+        result = productPrice * selectedCountry.tax
         console.log(`'applyTaxes' - return value: ${result}`)
         return result
     }
@@ -48,8 +48,8 @@ class Invoice {
 class Invoice {
     ...
     @log
-    applyTaxes(priceProduct){
-        return priceProduct * selectedCountry.tax
+    applyTaxes(productPrice){
+        return productPrice * selectedCountry.tax
     }
     ...
 }
